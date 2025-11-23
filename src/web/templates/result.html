@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>分析结果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>运动分析结果</h1>
+      {% if activity_label %}
+        <p class="activity-label">当前分析：{{ activity_label }}</p>
+      {% endif %}
+      <a href="{{ url_for('upload') }}">返回上传</a>
+
+      {% if show_keynode_plot and keynode_plot_filename %}
+        <section>
+          <h2>关键节点相似度</h2>
+          <img src="{{ url_for('media', session_id=session_id, filename=keynode_plot_filename) }}" alt="关键节点相似度柱状图" class="plot" />
+        </section>
+      {% endif %}
+
+      {% if angle_plot_filename %}
+        <section>
+          <h2>角度变化曲线</h2>
+          <img src="{{ url_for('media', session_id=session_id, filename=angle_plot_filename) }}" alt="角度曲线图" class="plot" />
+        </section>
+      {% endif %}
+
+      {% if focus_similarity_plot_filename %}
+        <section>
+          <h2>重点指标相似度</h2>
+          <img src="{{ url_for('media', session_id=session_id, filename=focus_similarity_plot_filename) }}" alt="重点相似度柱状图" class="plot" />
+        </section>
+      {% endif %}
+
+      {% if focus_metrics %}
+        <section>
+          <h2>重点动作参数</h2>
+          <table class="metrics-table">
+            <thead>
+              <tr>
+                <th>指标</th>
+                <th>数值 (°)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for name, value in focus_metrics.items() %}
+                <tr>
+                  <td>{{ name }}</td>
+                  <td>{{ "%.2f"|format(value) if value == value else "N/A" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+      {% endif %}
+
+      {% if annotated_video_filename %}
+        <section>
+          <h2>骨架叠加视频</h2>
+          <video controls class="plot">
+            <source src="{{ url_for('media', session_id=session_id, filename=annotated_video_filename) }}" type="video/mp4" />
+            您的浏览器不支持视频播放，请下载后查看。
+          </video>
+          <p>
+            <a href="{{ url_for('download', session_id=session_id, filename=annotated_video_filename) }}" target="_blank">
+              下载带骨架标注的视频
+            </a>
+          </p>
+        </section>
+      {% endif %}
+
+      <section>
+        <h2>动作建议</h2>
+        {% if recommendations %}
+          <ul>
+            {% for rec in recommendations %}
+              <li>{{ rec }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>暂无建议。</p>
+        {% endif %}
+      </section>
+    </div>
+  </body>
+</html>
+

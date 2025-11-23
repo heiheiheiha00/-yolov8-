@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>运动动作分析</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>上传你的运动视频</h1>
+      <p class="upload-hint">
+        请尽量确保输入视频的目标人物完整、大小合适、背景干净，且目标人物不要出现快速、大规模的晃动。
+      </p>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <form method="post" enctype="multipart/form-data" class="upload-form">
+        <label for="activity" class="form-label">选择分析类型</label>
+        <select id="activity" name="activity" class="form-select">
+          {% for option in activity_options %}
+            <option value="{{ option.key }}" {% if option.key == selected_activity %}selected{% endif %}>
+              {{ option.label }}
+            </option>
+          {% endfor %}
+        </select>
+        <input type="file" name="video" accept="video/*" required />
+        <button type="submit">开始分析</button>
+      </form>
+    </div>
+  </body>
+</html>
+

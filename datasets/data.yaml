@@ -1,0 +1,8 @@
+path: E:/基于yolov8的人物动作捕捉/datasets
+train: images/train
+val: images/val
+test: images/val
+names:
+  0: player
+kpt_shape: [17, 3]
+flip_idx: [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15]

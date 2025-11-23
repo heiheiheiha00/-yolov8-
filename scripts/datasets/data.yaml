@@ -1,0 +1,7 @@
+path: datasets
+train: images/train
+val: images/val
+test: images/val
+names:
+  0: player
+kpt_shape: [17, 3]
