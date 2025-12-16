@@ -2,14 +2,15 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <title>运动动作分析</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>运动动作分析系统</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
     <div class="container">
-      <h1>上传你的运动视频</h1>
+      <h1>🏃 运动动作分析系统</h1>
       <p class="upload-hint">
-        请尽量确保输入视频的目标人物完整、大小合适、背景干净，且目标人物不要出现快速、大规模的晃动。
+        📌 <strong>上传提示：</strong>请尽量确保输入视频的目标人物完整、大小合适、背景干净，且目标人物不要出现快速、大规模的晃动，以获得最佳分析效果。
       </p>
       {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -20,19 +21,68 @@
           </div>
         {% endif %}
       {% endwith %}
-      <form method="post" enctype="multipart/form-data" class="upload-form">
-        <label for="activity" class="form-label">选择分析类型</label>
-        <select id="activity" name="activity" class="form-select">
-          {% for option in activity_options %}
-            <option value="{{ option.key }}" {% if option.key == selected_activity %}selected{% endif %}>
-              {{ option.label }}
-            </option>
-          {% endfor %}
-        </select>
-        <input type="file" name="video" accept="video/*" required />
-        <button type="submit">开始分析</button>
+      <form method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm" onsubmit="showLoading()">
+        <div>
+          <label for="activity" class="form-label">📊 选择分析类型</label>
+          <select id="activity" name="activity" class="form-select">
+            {% for option in activity_options %}
+              <option value="{{ option.key }}" {% if option.key == selected_activity %}selected{% endif %}>
+                {{ option.label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="video" class="form-label">🎬 选择视频文件</label>
+          <input type="file" id="video" name="video" accept="video/*" required />
+        </div>
+        <button type="submit" id="submitBtn">
+          🚀 开始分析
+        </button>
+        <div id="loadingMsg" style="display: none; padding: 1rem; text-align: center; color: #667eea; font-weight: 600;">
+          ⏳ 正在分析视频，请稍候...（这可能需要几分钟时间）
+        </div>
       </form>
+      <script>
+        function showLoading() {
+          const submitBtn = document.getElementById('submitBtn');
+          const loadingMsg = document.getElementById('loadingMsg');
+          
+          submitBtn.disabled = true;
+          submitBtn.textContent = '⏳ 分析中...';
+          loadingMsg.style.display = 'block';
+          
+          // 添加超时提示
+          setTimeout(function() {
+            if (submitBtn.disabled) {
+              loadingMsg.innerHTML = '⏳ 正在分析视频，请稍候...（这可能需要几分钟时间）<br><small style="color: #64748b;">如果等待时间过长，请检查控制台是否有错误信息</small>';
+            }
+          }, 10000); // 10秒后显示提示
+        }
+        
+        // 监听表单提交，确保加载提示显示
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+          showLoading();
+          // 不阻止默认提交，让表单正常提交
+        });
+        
+        // 检查是否有错误消息
+        window.addEventListener('load', function() {
+          const flashMessages = document.querySelector('.flash');
+          if (flashMessages) {
+            // 如果有错误消息，确保按钮可以重新提交
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = '🚀 开始分析';
+            }
+            const loadingMsg = document.getElementById('loadingMsg');
+            if (loadingMsg) {
+              loadingMsg.style.display = 'none';
+            }
+          }
+        });
+      </script>
     </div>
   </body>
 </html>
-

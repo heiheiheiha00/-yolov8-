@@ -1,8 +1,0 @@
-elbow_left 动作偏差较大，请注意调整。
-elbow_right 动作偏差较大，请注意调整。
-左膝摆动高度不一致，注意保持一致的步幅。
-右膝摆动高度不一致，注意保持一致的步幅。
-shoulder_left 动作偏差较大，请注意调整。
-shoulder_right 动作偏差较大，请注意调整。
-wrist_left_head 动作偏差较大，请注意调整。
-wrist_right_head 动作偏差较大，请注意调整。

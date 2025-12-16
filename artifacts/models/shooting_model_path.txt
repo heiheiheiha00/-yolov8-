@@ -1,1 +1,1 @@
-E:\基于yolov8的人物动作捕捉\runs\train\kobe_pose2\weights\best.pt
+runs\train\kobe_pose2\weights\best.pt

@@ -1,8 +1,0 @@
-elbow_left angle deviation is 57.5°
-elbow_right angle deviation is 34.7°
-左膝摆动高度不一致，注意保持一致的步幅。
-右膝摆动高度不一致，注意保持一致的步幅。
-shoulder_left angle deviation is 14.9°
-shoulder_right angle deviation is 20.2°
-wrist_left_head angle deviation is 50.9°
-wrist_right_head angle deviation is 32.4°

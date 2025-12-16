@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>搜索结果 - {{ keyword }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔍 搜索结果</h1>
+      <p class="activity-label">搜索关键词：{{ keyword }}</p>
+      
+      {% if llm_answer %}
+        <section>
+          <h2>💡 AI智能回答</h2>
+          <div style="padding: 1.5rem; background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%); border-radius: 12px; line-height: 1.8; white-space: pre-wrap;">
+            {{ llm_answer }}
+          </div>
+        </section>
+      {% elif llm_error %}
+        <section>
+          <h2>⚠️ AI回答获取失败</h2>
+          <div style="padding: 1.5rem; background: #fee2e2; border-radius: 12px; color: #991b1b; line-height: 1.8; white-space: pre-wrap;">
+            {{ llm_error }}
+          </div>
+          {% if technical_error %}
+            <details style="margin-top: 1rem;">
+              <summary style="cursor: pointer; color: #64748b; font-size: 0.9rem;">查看技术详情</summary>
+              <div style="padding: 1rem; margin-top: 0.5rem; background: #f1f5f9; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #475569;">
+                {{ technical_error }}
+              </div>
+            </details>
+          {% endif %}
+        </section>
+      {% endif %}
+      
+      {% if search_url %}
+        <section>
+          <h2>🌐 相关搜索结果</h2>
+          <p style="margin-bottom: 1rem;">
+            <a href="{{ search_url }}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); text-decoration: none;">
+              🔗 在搜索引擎中查看更多结果
+            </a>
+          </p>
+        </section>
+      {% endif %}
+      
+      {% if results %}
+        <section>
+          <h2>📋 搜索结果列表</h2>
+          {% for result in results %}
+            <div style="padding: 1.25rem; background: #f8fafc; border-left: 4px solid #667eea; border-radius: 10px; margin-bottom: 1rem;">
+              <h3 style="margin-top: 0; margin-bottom: 0.5rem;">
+                <a href="{{ result.link }}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 1.1rem;">
+                  {{ result.title }}
+                </a>
+              </h3>
+              <p style="color: #64748b; margin: 0.5rem 0; line-height: 1.6;">
+                {{ result.snippet }}
+              </p>
+              <a href="{{ result.link }}" target="_blank" style="color: #667eea; font-size: 0.9rem; text-decoration: none;">
+                {{ result.link }}
+              </a>
+            </div>
+          {% endfor %}
+        </section>
+      {% endif %}
+      
+      <a href="javascript:history.back()" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: #f7fafc; border-radius: 10px; margin-top: 2rem;">
+        ← 返回上一页
+      </a>
+    </div>
+  </body>
+</html>
+

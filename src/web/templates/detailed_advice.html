@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>详细建议 - 运动动作分析系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>📋 详细动作建议</h1>
+      {% if activity_label %}
+        <p class="activity-label">当前分析类型：{{ activity_label }}</p>
+      {% endif %}
+      <a href="{{ url_for('result', session_id=session_id) }}">← 返回结果页面</a>
+
+      {% if overall_evaluation %}
+        <section>
+          <h2>📊 整体评估</h2>
+          {% for item in overall_evaluation %}
+            <p style="padding: 1rem; background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%); border-radius: 10px; color: #1e293b; line-height: 1.8; margin-bottom: 1rem;">
+              {{ item }}
+            </p>
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      {% if technical_analysis %}
+        <section>
+          <h2>🔬 技术分析</h2>
+          {% for item in technical_analysis %}
+            <div style="padding: 1.25rem; background: #f8fafc; border-left: 4px solid #667eea; border-radius: 10px; margin-bottom: 1rem; line-height: 1.8;">
+              {{ item }}
+            </div>
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      {% if improvement_suggestions %}
+        <section>
+          <h2>💪 改进建议</h2>
+          <ul>
+            {% for item in improvement_suggestions %}
+              <li style="padding: 1rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; border-radius: 10px; margin-bottom: 0.75rem; line-height: 1.8;">
+                {{ item }}
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if not overall_evaluation and not technical_analysis and not improvement_suggestions %}
+        <section>
+          <p style="padding: 1.5rem; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 10px; color: #065f46; font-weight: 500;">
+            ✅ 暂无详细建议数据，请返回结果页面查看基础建议。
+          </p>
+        </section>
+      {% endif %}
+
+      {% if recommended_keywords and recommended_keywords|length > 0 %}
+        <section>
+          <h2>🔍 猜你想搜...</h2>
+          <p style="color: #64748b; margin-bottom: 1rem; font-size: 0.9rem;">根据您的动作分析结果，为您推荐以下相关训练关键词</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;">
+            {% for keyword in recommended_keywords %}
+              <span style="display: inline-block; padding: 0.625rem 1.25rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; border-radius: 20px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.4)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(102, 126, 234, 0.3)';"
+                    onclick="searchKeyword('{{ keyword }}')">
+                {{ keyword }}
+              </span>
+            {% endfor %}
+          </div>
+        </section>
+      {% else %}
+        <section>
+          <h2>🔍 猜你想搜...</h2>
+          <p style="padding: 1rem; background: #f1f5f9; border-radius: 10px; color: #64748b; font-size: 0.9rem;">
+            ⚠️ 关键词推荐功能暂不可用，请先运行训练脚本生成推荐模型。
+          </p>
+        </section>
+      {% endif %}
+    </div>
+    <script>
+      function searchKeyword(keyword) {
+        // 使用后端搜索接口
+        const searchUrl = "{{ url_for('search_keyword', keyword='') }}" + encodeURIComponent(keyword);
+        
+        // 打开新窗口进行搜索
+        window.open(searchUrl, '_blank');
+      }
+    </script>
+  </body>
+</html>
+

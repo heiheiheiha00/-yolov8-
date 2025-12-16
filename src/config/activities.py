@@ -14,8 +14,11 @@ def _path_from_env(env_key: str, default: Optional[Path] = None) -> Optional[Pat
         candidate = Path(value)
         if candidate.exists():
             return candidate
-        # Even if the file does not exist yet (e.g., model still training),
-        # return the path so downstream components know where to expect it.
+        # If env var is set but file doesn't exist, fall back to default if it exists
+        # This handles cases where env var points to wrong/old path
+        if default and default.exists():
+            return default
+        # If neither exists, return the env var path (for training scenarios)
         return candidate
     return default
 
@@ -26,6 +29,15 @@ def _default_run_path(run_name: str) -> Path:
 
 def _default_reference_path(filename: str) -> Path:
     return PROJECT_ROOT / "artifacts" / filename
+
+
+def _find_reference_features(primary: Path, fallback: Path) -> Optional[Path]:
+    """Try primary path first, then fallback if primary doesn't exist."""
+    if primary.exists():
+        return primary
+    if fallback.exists():
+        return fallback
+    return primary  # Return primary even if it doesn't exist (for error messages)
 
 
 @dataclass(slots=True)
@@ -45,10 +57,12 @@ class ActivitySpec:
 
 def get_activity_specs() -> dict[str, ActivitySpec]:
     """Return the default activity specifications for shooting and running."""
-    shooting_model = _path_from_env("MODEL_PATH", _default_run_path("kobe_pose"))
-    shooting_reference_features = _path_from_env(
-        "REFERENCE_FEATURES_PATH", _default_reference_path("reference_features_shooting.json")
-    )
+    shooting_model = _path_from_env("MODEL_PATH", _default_run_path("kobe_pose2"))
+    # Try reference_features_shooting.json first, fallback to reference_features.json
+    shooting_ref_primary = _default_reference_path("reference_features_shooting.json")
+    shooting_ref_fallback = _default_reference_path("reference_features.json")
+    shooting_ref_default = _find_reference_features(shooting_ref_primary, shooting_ref_fallback)
+    shooting_reference_features = _path_from_env("REFERENCE_FEATURES_PATH", shooting_ref_default)
     shooting_reference_video = _path_from_env("REFERENCE_VIDEO_PATH")
 
     running_model = _path_from_env("RUN_MODEL_PATH", _default_run_path("running_pose"))
